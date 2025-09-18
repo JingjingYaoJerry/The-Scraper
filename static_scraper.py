@@ -50,7 +50,7 @@ def main():
         html = get_page(page)
         if not html:
             break
-        data = parse(html)
+        data = parse(html) # list of dicts with keys: "text", "author", "tags"
         if not data:
             break
         allrows.extend(data) # or allrows += data with slightly worse efficiency
