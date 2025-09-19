@@ -1,22 +1,52 @@
 from playwright.sync_api import sync_playwright
 import csv
 
-# As demonstrated in Playwright's official docs (https://playwright.dev/python/docs/library)
-with sync_playwright() as p:
-    browser = p.chromium.launch(headless=True) # in a headless environment (i.e., without a visible UI)
-    page = browser.new_page()
-    page.goto("https://quotes.toscrape.com/js/")
-    page.wait_for_selector(".quote") # 
-    quotes = page.query_selector_all(".quote")
-    rows = []
-    for q in quotes:
-        rows.append({
-            "text": q.query_selector(".text").inner_text(),
-            "author": q.query_selector(".author").inner_text(),
-            "tags": "|".join([t.inner_text() for t in q.query_selector_all(".tags .tag")])
-        })
-    with open("quotes_js.csv","w",newline='',encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=["text","author","tags"])
+
+BASE = "https://quotes.toscrape.com/js/"
+
+
+def scrape_quotes():
+    """Scrape quotes from the JS-rendered page using Playwright locators.
+    
+    Returns:
+        list[dict]: List of quote data with keys: "text", "author", "tags".
+    """
+    # As demonstrated in Playwright's official docs (https://playwright.dev/python/docs/library)
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True) # in a headless environment (i.e., without a visible UI)
+        page = browser.new_page()
+        page.goto(BASE)
+        quotes = page.locator(".quote") # use Locator API as recommended in the docs
+        count = quotes.count()
+        print("Total quotes found:", count)
+
+        rows = []
+        # Iterate through each quote and extract
+        for i in range(count):
+            q = quotes.nth(i)
+            text = q.locator(".text").inner_text()
+            author = q.locator(".author").inner_text()
+            tags = "|".join(q.locator(".tags .tag").all_inner_texts())
+            rows.append({"text": text, "author": author, "tags": tags})
+
+        browser.close()
+        print(f"Scraped {len(rows)} quotes.")
+        return rows
+
+def save_to_csv(rows, filename="quotes_js.csv"):
+    """Save scraped rows to a CSV file.
+    
+    Args:
+        rows (list[dict]): List of quote data.
+    """
+    with open(filename, "w", newline='', encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["text", "author", "tags"])
         writer.writeheader()
         writer.writerows(rows)
-    browser.close()
+
+def main():
+    rows = scrape_quotes()
+    save_to_csv(rows)
+
+if __name__ == "__main__":
+    main()

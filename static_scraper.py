@@ -11,7 +11,7 @@ def get_page(page):
     Args:
         page (int): Page number to fetch.
     Returns:
-        str|None: HTML content or None on failure.
+        str | None: HTML content or None on failure.
     """
     for attempt in range(3):
         try:
