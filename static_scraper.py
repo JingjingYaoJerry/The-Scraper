@@ -1,8 +1,9 @@
 from bs4 import BeautifulSoup
-import requests, time, random, csv
+import requests, time, csv
 
 
 BASE = "http://quotes.toscrape.com/page/{page}/"
+OUTPUT_CSV = "./data/quotes.csv"
 
 
 def get_page(page):
@@ -56,9 +57,11 @@ def main():
         allrows.extend(data) # or allrows += data with slightly worse efficiency
         print("page", page, "->", len(data), "items")
         page += 1
-        time.sleep(random.uniform(0.5, 1.5))
-    with open("quotes.csv", "w", newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=["text", "author", "tags"])
+        time.sleep(1)
+    with open(OUTPUT_CSV, "w", newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, 
+                                fieldnames=["text", "author", "tags"],
+                                quoting=csv.QUOTE_ALL) # for handling semicolons that are misinterpreted as column separators
         writer.writeheader() # write column names (i.e., "text", "author", "tags")
         writer.writerows(allrows)
     print("Saved", len(allrows), "rows.")

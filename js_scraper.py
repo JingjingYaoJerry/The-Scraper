@@ -33,14 +33,16 @@ def scrape_quotes():
         print(f"Scraped {len(rows)} quotes.")
         return rows
 
-def save_to_csv(rows, filename="quotes_js.csv"):
+def save_to_csv(rows, filename="./data/quotes_js.csv"):
     """Save scraped rows to a CSV file.
     
     Args:
         rows (list[dict]): List of quote data.
     """
     with open(filename, "w", newline='', encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=["text", "author", "tags"])
+        writer = csv.DictWriter(f, 
+                                fieldnames=["text", "author", "tags"],
+                                quoting=csv.QUOTE_ALL) # for handling semicolons that are misinterpreted as column separators
         writer.writeheader()
         writer.writerows(rows)
 
