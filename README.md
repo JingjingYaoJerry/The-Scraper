@@ -1,4 +1,4 @@
-# The Scraper - Demo for Scraping
+# The Scraper - Scrapers with Various Features
 
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![Playwright](https://img.shields.io/badge/Playwright-Enabled-green.svg)](https://playwright.dev/docs/intro)
