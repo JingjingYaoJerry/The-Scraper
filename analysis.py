@@ -7,7 +7,11 @@ CSV_FILE = "./data/quotes_js.csv"
 
 def main():
     # Load the dataset
-    df = pd.read_csv(CSV_FILE)
+    try:
+        df = pd.read_csv(CSV_FILE)
+    except FileNotFoundError:
+        print(f"Please run js_scraper.py first to generate {CSV_FILE}.")
+        exit()
     df = df.drop_duplicates(subset=["text"])
 
     # Count quotes per author and show the top ones
